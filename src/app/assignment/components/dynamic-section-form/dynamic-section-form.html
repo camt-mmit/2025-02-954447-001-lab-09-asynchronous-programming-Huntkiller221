@@ -1,0 +1,44 @@
+<div class="container">
+  <h2>Angular week-09: Signal Form</h2> <button mat-raised-button color="primary" (click)="addSection()">
+    + Section
+  </button>
+
+  <div class="sections-list">
+    @for (sec of sections(); track sIdx; let sIdx = $index) {
+      <div class="section-card">
+        <div class="header">
+          <button mat-stroked-button (click)="addNumber(sIdx)">+ Number</button>
+          <span>Section {{ sIdx + 1 }}</span>
+
+          <button mat-icon-button color="warn"
+                  (click)="removeSection(sIdx)"
+                  [disabled]="sections().length <= 1">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+
+        <div class="numbers-container">
+          @for (num of sec; track nIdx; let nIdx = $index) {
+            <div class="number-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Number {{ nIdx + 1 }}</mat-label>
+                <input matInput type="number"
+                       [ngModel]="num"
+                       (ngModelChange)="updateValue(sIdx, nIdx, $event)" />
+
+                <button mat-icon-button matSuffix color="warn"
+                        (click)="removeNumber(sIdx, nIdx)"
+                        [disabled]="sec.length <= 1">
+                  <mat-icon>delete_outline</mat-icon>
+                </button>
+              </mat-form-field>
+            </div>
+          }
+        </div>
+
+        <div class="footer">
+          <strong>Result:</strong> <u>{{ calculateTotal(sIdx) | number }}</u> </div>
+      </div>
+    }
+  </div>
+</div>
