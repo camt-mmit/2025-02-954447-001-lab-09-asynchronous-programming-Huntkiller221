@@ -1,6 +1,6 @@
 import { Component, inject, signal, effect } from '@angular/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormField } from '@angular/forms/signals';
 import { DynamicSectionDataService } from '../../service/dynamic-section-data.storage';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -13,20 +13,25 @@ import { form } from '@angular/forms/signals';
   selector: 'app-dynamic-section-form',
   standalone: true,
   imports: [
-    CommonModule, FormsModule, DecimalPipe,
-    MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule
+    CommonModule,
+    FormField,
+    DecimalPipe,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatIconModule,
   ],
   templateUrl: './dynamic-section-form.html',
 })
 export class DynamicSectionFormComponent {
   private storage = inject(DynamicSectionDataService);
   sections = signal<number[][]>([]);
-  form = form(this.sections)
+  form = form(this.sections);
 
   constructor() {
     const initialData = this.storage.data();
     if (initialData && initialData.length > 0) {
-      this.sections.set(initialData.map(s => [...s]));
+      this.sections.set(initialData.map((s) => [...s]));
     } else {
       this.addSection();
     }
@@ -37,17 +42,17 @@ export class DynamicSectionFormComponent {
   }
 
   addSection() {
-    this.sections.update(s => [...s, [0]]);
+    this.sections.update((s) => [...s, [0]]);
   }
 
   removeSection(sIdx: number) {
     if (this.sections().length > 1) {
-      this.sections.update(s => s.filter((_, i) => i !== sIdx));
+      this.sections.update((s) => s.filter((_, i) => i !== sIdx));
     }
   }
 
   addNumber(sIdx: number) {
-    this.sections.update(s => {
+    this.sections.update((s) => {
       const newSections = [...s];
       newSections[sIdx] = [...newSections[sIdx], 0];
       return newSections;
@@ -55,7 +60,7 @@ export class DynamicSectionFormComponent {
   }
 
   removeNumber(sIdx: number, nIdx: number) {
-    this.sections.update(s => {
+    this.sections.update((s) => {
       const newSections = [...s];
       if (newSections[sIdx].length > 1) {
         newSections[sIdx] = newSections[sIdx].filter((_, i) => i !== nIdx);
@@ -66,7 +71,7 @@ export class DynamicSectionFormComponent {
 
   updateValue(sIdx: number, nIdx: number, value: string) {
     const numValue = parseFloat(value) || 0;
-    this.sections.update(s => {
+    this.sections.update((s) => {
       const newSections = [...s];
       newSections[sIdx][nIdx] = numValue;
       return newSections;
